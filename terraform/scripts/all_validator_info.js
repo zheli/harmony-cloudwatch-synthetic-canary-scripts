@@ -40,8 +40,9 @@ const apiCanaryBlueprint = async function () {
                     throw `there should be more than 0 validators available`;
                 }
 
-                if (result[0]['active-status'] != 'active') {
-                    throw `First validator status should be active, result[0]=${JSON.stringify(result[0])}`;
+                let firstValidatorActiveStatus = result[0]['active-status'];
+                if (firstValidatorActiveStatus != 'active' && firstValidatorActiveStatus != 'inactive') {
+                    throw `First validator status should either be active or inactive, result[0]=${JSON.stringify(result[0])}`;
                 }
 
                 resolve();
