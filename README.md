@@ -12,4 +12,25 @@ terraform init
 terraform apply -var="account_id={your aws account id}" -var="s3={s3 bucket name for log storage}"
 ```
 
-##
+## Implementation
+There are two types of endpoint checks:
+1. Check using the generic JS script, which is generated using [a template](terraform/templates/generic_test.tmpl.js).
+1. Check using its own JS file. They are located under
+   [terraform/scripts](terraform/scripts) folderits own JS file. They are
+   located under [terraform/scripts](terraform/scripts) folder. The name is the
+   same with the CloudWatch canary name.
+
+## Add a new canary using generic JS script
+You can add new canary by adding a new entry in `rpc_methods.tf` file, the
+structure is like below:
+```
+"{canary_name}": {
+  "method" : "{rpc_method_name}",
+  "params" : [],
+  # the result type, this is always verified.
+  "result_type" : "number",
+  # whether to compare the result with expected_result value
+  "verify_result" : true
+  "expected_result" : "0"
+}
+```
