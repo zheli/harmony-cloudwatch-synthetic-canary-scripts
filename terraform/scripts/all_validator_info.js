@@ -6,7 +6,7 @@ const apiCanaryBlueprint = async function () {
     // Handle validation for positive scenario
     const validateSuccessful = async function(res) {
         return new Promise((resolve, reject) => {
-            if (res.statusCode != 200) {
+            if (res.statusCode < 200 || res.statusCode > 299) {
                 throw res.statusCode + ' ' + res.statusMessage;
             }
 
@@ -18,8 +18,12 @@ const apiCanaryBlueprint = async function () {
             res.on('end', () => {
                 // Add validation on 'responseBody' here if required.
                 let body = JSON.parse(responseBody);
-                let requiredFields = ['jsonrpc', 'id', 'result'];
 
+                if (('error' in body)) {
+                    throw `Found error in response! Error: ${JSON.stringify(body.error)}`;
+                }
+
+                let requiredFields = ['jsonrpc', 'id', 'result'];
                 requiredFields.map(function(field){
                     if (!(field in body)) {
                         console.debug('body', body);
@@ -27,8 +31,17 @@ const apiCanaryBlueprint = async function () {
                     }
                 });
 
-                if (('error' in body)) {
-                    throw 'error field exists in body';
+                let result = body.result;
+                if ("object" !== typeof result) {
+                    throw `result type: ${typeof result}, should be "object"`;
+                }
+
+                if (result.length == 0) {
+                    throw `there should be more than 0 validators available`;
+                }
+
+                if (result[0]['active-status'] != 'active') {
+                    throw `First validator status should be active, result[0]=${JSON.stringify(result[0])}`;
                 }
 
                 resolve();
@@ -37,12 +50,11 @@ const apiCanaryBlueprint = async function () {
     };
 
 
-    // Set request option for Verify hmyv2_getBalance
     let requestBody = {
-      jsonrpc: '2.0',
-      id: 1,
-      method: 'hmyv2_getBalance',
-      params: ['one15vlc8yqstm9algcf6e94dxqx6y04jcsqjuc3gt']
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'hmyv2_getAllValidatorInformation',
+        params: [0]
     };
     let requestOptionsStep1 = {
         hostname: 'rpc.s0.t.hmny.io',
@@ -57,7 +69,6 @@ const apiCanaryBlueprint = async function () {
     };
     requestOptionsStep1['headers']['User-Agent'] = [synthetics.getCanaryUserAgentString(), requestOptionsStep1['headers']['User-Agent']].join(' ');
 
-    // Set step config option for Verify hmyv2_getBalance
    let stepConfig1 = {
         includeRequestHeaders: true,
         includeResponseHeaders: true,
@@ -67,7 +78,7 @@ const apiCanaryBlueprint = async function () {
         continueOnHttpStepFailure: true
     };
 
-    await synthetics.executeHttpStep('Verify hmyv2_getBalance', requestOptionsStep1, validateSuccessful, stepConfig1);
+    await synthetics.executeHttpStep('Verify hmyv2_getAllValidatorInformation', requestOptionsStep1, validateSuccessful, stepConfig1);
 
 
 };

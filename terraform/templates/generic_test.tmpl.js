@@ -147,8 +147,13 @@ const apiCanaryBlueprint = async function () {
 
                 let result = body.result;
                 let resultType = "${result_type}";
-                let expectedResult = ${expected_result};
-                switch (resultType) {
+                let verifyResult = ${verify_result};
+                if (resultType != (typeof result)) {
+                    throw `expected resultType: $${resultType}, got type: $${typeof result}. Result=$${result}`;
+                }
+                if (verifyResult) {
+                    let expectedResult = ${expected_result};
+                    switch (resultType) {
                     case 'object':
                         if (!deepCompare(expectedResult, result)) {
                             throw `expected result: $${JSON.stringify(expectedResult)}, got $${JSON.stringify(result)}`;
@@ -158,6 +163,7 @@ const apiCanaryBlueprint = async function () {
                         if (expectedResult !== result) {
                             throw `expected result: $${expectedResult}, got $${result}`;
                         }
+                    }
                 }
 
                 resolve();
