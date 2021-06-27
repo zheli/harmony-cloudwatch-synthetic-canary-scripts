@@ -33,7 +33,7 @@ locals {
       ],
       "result_type" : "string",
       "verify_result" : true
-      "expected_result" : "\"0xDEADBEEF\""
+      "expected_result" : "\"0x\""
     },
     "get_storage_at" : {
       "method" : "hmyv2_getStorageAt"
@@ -342,7 +342,7 @@ locals {
       # "expected_result" will be ignored when "verify_result" is false
       "expected_result" : "0"
     },
-    "tran_blk_no_i" : {
+    "tran_by_blk_num_index" : {
       "method" : "hmyv2_getTransactionByBlockNumberAndIndex",
       "params" : [
         3687181,
@@ -373,16 +373,13 @@ locals {
       # "expected_result" will be ignored when "verify_result" is false
       "expected_result" : "0"
     },
-    # TODO: replace this with a JS test case
+    # test is in send_raw_tran.js script, the fields in this map are ignored
     "send_raw_tran" : {
-      "method" : "hmyv2_sendRawTransaction",
-      "params" : [
-        "0xDEADBEEF"
-      ],
-      "result_type" : "string",
+      "method" : "",
+      "params" : [],
+      "result_type" : "",
       "verify_result" : false
-      # "expected_result" will be ignored when "verify_result" is false
-      "expected_result" : "0"
+      "expected_result" : ""
     },
 
     # blockchain - network
@@ -673,14 +670,14 @@ locals {
       "params" : ["one15vlc8yqstm9algcf6e94dxqx6y04jcsqjuc3gt", 1],
       "result_type" : "number",
       "verify_result" : true
-      "expected_result" : 12001989979000000000000
+      "expected_result" : 0
     },
     "staking_tran_count" : {
       "method" : "hmyv2_getStakingTransactionsCount",
       "params" : ["one15vlc8yqstm9algcf6e94dxqx6y04jcsqjuc3gt", "SENT"],
       "result_type" : "number",
       "verify_result" : true
-      "expected_result" : 12001989979000000000000
+      "expected_result" : 0
     },
     "staking_tran_history" : {
       "method" : "hmyv2_getStakingTransactionsHistory",

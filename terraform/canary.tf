@@ -28,11 +28,9 @@ resource "aws_synthetics_canary" "main" {
   artifact_s3_location = "s3://${var.s3}/canary/${each.key}"
   execution_role_arn   = aws_iam_role.main.arn
   handler              = "apiCanaryBlueprint.handler"
-  # TODO change this
-  start_canary = true
-  # start_canary    = false
-  zip_file        = "/tmp/canary_zip_inline-${each.key}-${local.timestamp}.zip"
-  runtime_version = "syn-nodejs-puppeteer-3.1"
+  start_canary         = true
+  zip_file             = "/tmp/canary_zip_inline-${each.key}-${local.timestamp}.zip"
+  runtime_version      = "syn-nodejs-puppeteer-3.1"
 
   run_config {
     active_tracing     = true
